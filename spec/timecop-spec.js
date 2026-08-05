@@ -2,10 +2,6 @@ const path = require("path");
 const CompileCache = require(
   path.join(atom.getLoadSettings().resourcePath, "src", "compile-cache"),
 );
-const CSON = require(
-  path.join(atom.getLoadSettings().resourcePath, "node_modules", "@lumine-code", "season"),
-);
-
 const { it, fit, ffit, beforeEach, afterEach } = require("./async-spec-helpers"); // eslint-disable-line no-unused-vars
 
 describe("Timecop", () => {
@@ -13,16 +9,7 @@ describe("Timecop", () => {
     spyOn(CompileCache, "getCacheStats").andReturn({
       ".js": { hits: 3, misses: 4 },
       ".ts": { hits: 5, misses: 6 },
-      ".coffee": { hits: 7, misses: 8 },
     });
-
-    spyOn(CSON, "getCacheMisses").andReturn(10);
-
-    // The Less cache is created lazily on the first Less compile, which never
-    // happens now that the bundled themes ship plain CSS.
-    atom.themes.lessCache ??= {};
-    atom.themes.lessCache.cache ??= { stats: {} };
-    atom.themes.lessCache.cache.stats.misses = 12;
 
     await atom.packages.activatePackage("timecop");
   });
@@ -88,11 +75,8 @@ describe("Timecop", () => {
     it("shows how many files were transpiled from each language", () => {
       const cachePanel = timecopView.refs.cacheLoadingPanel;
 
-      expect(cachePanel.element.textContent).toMatch(/CoffeeScript files compiled\s*8/);
       expect(cachePanel.element.textContent).toMatch(/Babel files compiled\s*4/);
       expect(cachePanel.element.textContent).toMatch(/Typescript files compiled\s*6/);
-      expect(cachePanel.element.textContent).toMatch(/CSON files compiled\s*10/);
-      expect(cachePanel.element.textContent).toMatch(/Less files compiled\s*12/);
     });
   });
 

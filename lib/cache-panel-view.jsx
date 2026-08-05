@@ -20,13 +20,6 @@ module.exports = class CachePanelView {
           <div className="panel-heading">Compile Cache</div>
           <div className="panel-body padded">
             <div className="timing">
-              <span className="inline-block">CoffeeScript files compiled</span>
-              <span className="inline-block" ref="coffeeCompileCount">
-                Loading…
-              </span>
-            </div>
-
-            <div className="timing">
               <span className="inline-block">Babel files compiled</span>
               <span className="inline-block" ref="babelCompileCount">
                 Loading…
@@ -39,20 +32,6 @@ module.exports = class CachePanelView {
                 Loading…
               </span>
             </div>
-
-            <div className="timing">
-              <span className="inline-block">CSON files compiled</span>
-              <span className="inline-block" ref="csonCompileCount">
-                Loading…
-              </span>
-            </div>
-
-            <div className="timing">
-              <span className="inline-block">Less files compiled</span>
-              <span className="inline-block" ref="lessCompileCount">
-                Loading…
-              </span>
-            </div>
           </div>
         </div>
       </div>
@@ -62,18 +41,11 @@ module.exports = class CachePanelView {
   populate() {
     const compileCacheStats = this.getCompileCacheStats();
     if (compileCacheStats) {
-      this.refs.coffeeCompileCount.classList.add("highlight-info");
-      this.refs.coffeeCompileCount.textContent = compileCacheStats[".coffee"].misses;
       this.refs.babelCompileCount.classList.add("highlight-info");
       this.refs.babelCompileCount.textContent = compileCacheStats[".js"].misses;
       this.refs.typescriptCompileCount.classList.add("highlight-info");
       this.refs.typescriptCompileCount.textContent = compileCacheStats[".ts"].misses;
     }
-
-    this.refs.csonCompileCount.classList.add("highlight-info");
-    this.refs.csonCompileCount.textContent = this.getCsonCompiles();
-    this.refs.lessCompileCount.classList.add("highlight-info");
-    this.refs.lessCompileCount.textContent = this.getLessCompiles();
   }
 
   getCompileCacheStats() {
@@ -86,27 +58,4 @@ module.exports = class CachePanelView {
     }
   }
 
-  getCsonCompiles() {
-    try {
-      const CSON = require(
-        path.join(atom.getLoadSettings().resourcePath, "node_modules", "@lumine-code", "season"),
-      );
-      if (CSON.getCacheMisses) {
-        return CSON.getCacheMisses() || 0;
-      } else {
-        return 0;
-      }
-    } catch {
-      return 0;
-    }
-  }
-
-  getLessCompiles() {
-    const lessCache = atom.themes.lessCache;
-    if (lessCache && lessCache.cache && lessCache.cache.stats && lessCache.cache.stats.misses) {
-      return lessCache.cache.stats.misses || 0;
-    } else {
-      return 0;
-    }
-  }
 };

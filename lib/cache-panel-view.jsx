@@ -57,5 +57,4 @@ module.exports = class CachePanelView {
       return null;
     }
   }
-
 };

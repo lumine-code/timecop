@@ -95,6 +95,58 @@ describe("Timecop", () => {
       expect(cachePanel.element.textContent).toMatch(/Less files compiled\s*12/);
     });
   });
+
+  describe("the window panel", () => {
+    let deserializeTimings = null;
+
+    const openWindowPanel = async () =>
+      (await atom.workspace.open("lumine://timecop")).refs.windowLoadingPanel;
+
+    beforeEach(() => {
+      deserializeTimings = atom.deserializeTimings;
+      atom.deserializeTimings = {};
+      atom.loadTime = null;
+    });
+
+    afterEach(() => {
+      atom.deserializeTimings = deserializeTimings;
+      atom.loadTime = null;
+    });
+
+    it("waits for the window to finish loading before showing its timings", async () => {
+      // A view restored into a window is built while that window is still
+      // loading, so the load time does not exist yet.
+      const windowPanel = await openWindowPanel();
+      expect(windowPanel.refs.windowLoadTime.textContent).toMatch(/Loading/);
+
+      atom.setWindowLoadTime(1234);
+      expect(windowPanel.refs.windowLoadTime.textContent).toBe("1234ms");
+      expect(windowPanel.refs.windowLoadTime.classList.contains("highlight-error")).toBe(true);
+    });
+
+    it("shows the timings straight away once the window has loaded", async () => {
+      atom.setWindowLoadTime(500);
+      const windowPanel = await openWindowPanel();
+      expect(windowPanel.refs.windowLoadTime.textContent).toBe("500ms");
+      expect(windowPanel.refs.windowLoadTime.classList.contains("highlight-info")).toBe(true);
+    });
+
+    it("hides the deserialize timings for a project that was not previously opened", async () => {
+      const windowPanel = await openWindowPanel();
+      atom.setWindowLoadTime(500);
+      expect(windowPanel.refs.deserializeTimings.style.display).toBe("none");
+    });
+
+    it("shows the deserialize timings for a project that was previously opened", async () => {
+      atom.deserializeTimings = { project: 20, workspace: 30 };
+
+      const windowPanel = await openWindowPanel();
+      atom.setWindowLoadTime(500);
+      expect(windowPanel.refs.deserializeTimings.style.display).toBe("");
+      expect(windowPanel.refs.projectLoadTime.textContent).toBe("20ms");
+      expect(windowPanel.refs.workspaceLoadTime.textContent).toBe("30ms");
+    });
+  });
 });
 
 class FakePackage {

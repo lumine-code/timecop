@@ -55,7 +55,6 @@ module.exports = class TimecopView {
   }
 
   populateActivationViews() {
-    this.refs.windowLoadingPanel.populate();
     this.showActivePackages();
     this.showActiveThemes();
   }

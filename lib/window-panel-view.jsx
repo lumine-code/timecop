@@ -23,6 +23,11 @@ module.exports = class WindowPanelView {
         title: "The time taken to rebuild the previously opened editors",
       }),
     );
+
+    // A view restored into a window is built while that window is still
+    // loading, so every one of these timings is waited for rather than read
+    // now — the window load time is the last of them to be recorded.
+    this.disposables.add(atom.whenWindowLoaded(() => this.populate()));
   }
 
   update() {}

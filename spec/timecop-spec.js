@@ -1,7 +1,5 @@
 const path = require("path");
-const CompileCache = require(
-  path.join(atom.getLoadSettings().resourcePath, "src", "compile-cache"),
-);
+const CompileCache = require(path.join(atom.app.getResourcePath(), "src", "compile-cache"));
 const { it, fit, ffit, beforeEach, afterEach } = require("./async-spec-helpers"); // eslint-disable-line no-unused-vars
 
 describe("Timecop", () => {
@@ -104,6 +102,7 @@ describe("Timecop", () => {
       expect(windowPanel.refs.windowLoadTime.textContent).toMatch(/Loading/);
 
       atom.setWindowLoadTime(1234);
+      await atom.window.whenLoaded();
       expect(windowPanel.refs.windowLoadTime.textContent).toBe("1234ms");
       expect(windowPanel.refs.windowLoadTime.classList.contains("highlight-error")).toBe(true);
     });
@@ -118,6 +117,7 @@ describe("Timecop", () => {
     it("hides the deserialize timings for a project that was not previously opened", async () => {
       const windowPanel = await openWindowPanel();
       atom.setWindowLoadTime(500);
+      await atom.window.whenLoaded();
       expect(windowPanel.refs.deserializeTimings.style.display).toBe("none");
     });
 
@@ -126,6 +126,7 @@ describe("Timecop", () => {
 
       const windowPanel = await openWindowPanel();
       atom.setWindowLoadTime(500);
+      await atom.window.whenLoaded();
       expect(windowPanel.refs.deserializeTimings.style.display).toBe("");
       expect(windowPanel.refs.projectLoadTime.textContent).toBe("20ms");
       expect(windowPanel.refs.workspaceLoadTime.textContent).toBe("30ms");

@@ -27,7 +27,7 @@ module.exports = class WindowPanelView {
     // A view restored into a window is built while that window is still
     // loading, so every one of these timings is waited for rather than read
     // now — the window load time is the last of them to be recorded.
-    this.disposables.add(atom.whenWindowLoaded(() => this.populate()));
+    atom.window.whenLoaded().then(() => this.populate());
   }
 
   update() {}
@@ -79,11 +79,11 @@ module.exports = class WindowPanelView {
   }
 
   populate() {
-    const time = atom.getWindowLoadTime();
+    const time = atom.window.getLoadTime();
     this.refs.windowLoadTime.classList.add(this.getHighlightClass(time));
     this.refs.windowLoadTime.textContent = `${time}ms`;
 
-    const { shellLoadTime } = atom.getLoadSettings();
+    const shellLoadTime = atom.runtime.getShellLoadTime();
     if (shellLoadTime != null) {
       this.refs.shellLoadTime.classList.add(this.getHighlightClass(shellLoadTime));
       this.refs.shellLoadTime.textContent = `${shellLoadTime}ms`;

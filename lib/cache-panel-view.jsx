@@ -50,9 +50,7 @@ module.exports = class CachePanelView {
 
   getCompileCacheStats() {
     try {
-      return require(
-        path.join(atom.getLoadSettings().resourcePath, "src", "compile-cache"),
-      ).getCacheStats();
+      return require(path.join(atom.app.getResourcePath(), "src", "compile-cache")).getCacheStats();
     } catch {
       return null;
     }

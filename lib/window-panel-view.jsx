@@ -1,5 +1,5 @@
 /** @jsx etch.dom */
-const { CompositeDisposable } = require("atom");
+const { CompositeDisposable } = require("lumine");
 const etch = require("@lumine-code/etch");
 
 module.exports = class WindowPanelView {
@@ -8,18 +8,18 @@ module.exports = class WindowPanelView {
 
     this.disposables = new CompositeDisposable();
     this.disposables.add(
-      atom.tooltips.add(this.refs.shellTiming, { title: "The time taken to launch the app" }),
+      lumine.tooltips.add(this.refs.shellTiming, { title: "The time taken to launch the app" }),
     );
     this.disposables.add(
-      atom.tooltips.add(this.refs.windowTiming, { title: "The time taken to load this window" }),
+      lumine.tooltips.add(this.refs.windowTiming, { title: "The time taken to load this window" }),
     );
     this.disposables.add(
-      atom.tooltips.add(this.refs.projectTiming, {
+      lumine.tooltips.add(this.refs.projectTiming, {
         title: "The time taken to rebuild the previously opened buffers",
       }),
     );
     this.disposables.add(
-      atom.tooltips.add(this.refs.workspaceTiming, {
+      lumine.tooltips.add(this.refs.workspaceTiming, {
         title: "The time taken to rebuild the previously opened editors",
       }),
     );
@@ -27,7 +27,7 @@ module.exports = class WindowPanelView {
     // A view restored into a window is built while that window is still
     // loading, so every one of these timings is waited for rather than read
     // now — the window load time is the last of them to be recorded.
-    atom.window.whenLoaded().then(() => this.populate());
+    lumine.window.whenLoaded().then(() => this.populate());
   }
 
   update() {}
@@ -79,11 +79,11 @@ module.exports = class WindowPanelView {
   }
 
   populate() {
-    const time = atom.window.getLoadTime();
+    const time = lumine.window.getLoadTime();
     this.refs.windowLoadTime.classList.add(this.getHighlightClass(time));
     this.refs.windowLoadTime.textContent = `${time}ms`;
 
-    const shellLoadTime = atom.runtime.getShellLoadTime();
+    const shellLoadTime = lumine.runtime.getShellLoadTime();
     if (shellLoadTime != null) {
       this.refs.shellLoadTime.classList.add(this.getHighlightClass(shellLoadTime));
       this.refs.shellLoadTime.textContent = `${shellLoadTime}ms`;
@@ -91,16 +91,16 @@ module.exports = class WindowPanelView {
       this.refs.shellTiming.style.display = "none";
     }
 
-    if (atom.deserializeTimings.project != null) {
+    if (lumine.deserializeTimings.project != null) {
       // Project and workspace timings only exist if the current project was previously opened
       this.refs.projectLoadTime.classList.add(
-        this.getHighlightClass(atom.deserializeTimings.project),
+        this.getHighlightClass(lumine.deserializeTimings.project),
       );
-      this.refs.projectLoadTime.textContent = `${atom.deserializeTimings.project}ms`;
+      this.refs.projectLoadTime.textContent = `${lumine.deserializeTimings.project}ms`;
       this.refs.workspaceLoadTime.classList.add(
-        this.getHighlightClass(atom.deserializeTimings.workspace),
+        this.getHighlightClass(lumine.deserializeTimings.workspace),
       );
-      this.refs.workspaceLoadTime.textContent = `${atom.deserializeTimings.workspace}ms`;
+      this.refs.workspaceLoadTime.textContent = `${lumine.deserializeTimings.workspace}ms`;
     } else {
       this.refs.deserializeTimings.style.display = "none";
     }

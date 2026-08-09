@@ -11,16 +11,16 @@ module.exports = class TimecopView {
     this.uri = uri;
     etch.initialize(this);
     this.refs.cacheLoadingPanel.populate();
-    if (atom.packages.hasLoadedInitialPackages()) {
+    if (lumine.packages.hasLoadedInitialPackages()) {
       this.populateLoadingViews();
     } else {
-      atom.packages.onDidLoadInitialPackages(() => this.populateLoadingViews());
+      lumine.packages.onDidLoadInitialPackages(() => this.populateLoadingViews());
     }
 
-    if (atom.packages.hasActivatedInitialPackages()) {
+    if (lumine.packages.hasActivatedInitialPackages()) {
       this.populateActivationViews();
     } else {
-      atom.packages.onDidActivateInitialPackages(() => this.populateActivationViews());
+      lumine.packages.onDidActivateInitialPackages(() => this.populateActivationViews());
     }
   }
 
@@ -61,7 +61,7 @@ module.exports = class TimecopView {
 
   showLoadedPackages() {
     const { time, count, packages } = this.getSlowPackages(
-      atom.packages.getLoadedPackages().filter((pack) => pack.getType() !== "theme"),
+      lumine.packages.getLoadedPackages().filter((pack) => pack.getType() !== "theme"),
       "loadTime",
     );
     this.refs.packageLoadingPanel.addPackages(packages, "loadTime");
@@ -73,7 +73,7 @@ module.exports = class TimecopView {
 
   showActivePackages() {
     const { time, count, packages } = this.getSlowPackages(
-      atom.packages.getActivePackages().filter((pack) => pack.getType() !== "theme"),
+      lumine.packages.getActivePackages().filter((pack) => pack.getType() !== "theme"),
       "activateTime",
     );
     this.refs.packageActivationPanel.addPackages(packages, "activateTime");
@@ -85,7 +85,7 @@ module.exports = class TimecopView {
 
   showLoadedThemes() {
     const { time, count, packages } = this.getSlowPackages(
-      atom.themes.getLoadedThemes(),
+      lumine.themes.getLoadedThemes(),
       "loadTime",
     );
     this.refs.themeLoadingPanel.addPackages(packages, "loadTime");
@@ -97,7 +97,7 @@ module.exports = class TimecopView {
 
   showActiveThemes() {
     const { time, count, packages } = this.getSlowPackages(
-      atom.themes.getActiveThemes(),
+      lumine.themes.getActiveThemes(),
       "activateTime",
     );
     this.refs.themeActivationPanel.addPackages(packages, "activateTime");

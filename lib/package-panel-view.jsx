@@ -1,5 +1,5 @@
 /** @jsx etch.dom */
-const { Disposable } = require("atom");
+const { Disposable } = require("lumine");
 const etch = require("@lumine-code/etch");
 
 module.exports = class PackagePanelView {
@@ -10,7 +10,7 @@ module.exports = class PackagePanelView {
     const clickHandler = (event) => {
       const target = event.target.closest("a.package");
       if (target) {
-        atom.workspace.open(`lumine://config/packages/${target.dataset.package}`);
+        lumine.workspace.open(`lumine://config/packages/${target.dataset.package}`);
       }
     };
     this.element.addEventListener("click", clickHandler);

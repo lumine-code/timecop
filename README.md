@@ -15,7 +15,7 @@ To install `timecop` search for _timecop_ in the Install pane of the Lumine sett
 
 ## Commands
 
-Commands available in `atom-workspace`:
+Commands available in `lumine-workspace`:
 
 - `timecop:view`: open the Timecop view with load timing details.
 

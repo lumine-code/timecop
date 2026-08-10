@@ -1,10 +1,9 @@
 const path = require("path");
 const CompileCache = require(path.join(lumine.app.getResourcePath(), "src", "compile-cache"));
-const { it, fit, ffit, beforeEach, afterEach } = require("./async-spec-helpers"); // eslint-disable-line no-unused-vars
 
 describe("Timecop", () => {
   beforeEach(async () => {
-    spyOn(CompileCache, "getCacheStats").andReturn({
+    spyOn(CompileCache, "getCacheStats").and.returnValue({
       ".js": { hits: 3, misses: 4 },
       ".ts": { hits: 5, misses: 6 },
     });
@@ -39,10 +38,10 @@ describe("Timecop", () => {
         }),
       ];
 
-      spyOn(lumine.packages, "getLoadedPackages").andReturn(packages);
-      spyOn(lumine.packages, "getActivePackages").andReturn(packages);
-      spyOn(lumine.packages, "hasLoadedInitialPackages").andReturn(true);
-      spyOn(lumine.packages, "hasActivatedInitialPackages").andReturn(true);
+      spyOn(lumine.packages, "getLoadedPackages").and.returnValue(packages);
+      spyOn(lumine.packages, "getActivePackages").and.returnValue(packages);
+      spyOn(lumine.packages, "hasLoadedInitialPackages").and.returnValue(true);
+      spyOn(lumine.packages, "hasActivatedInitialPackages").and.returnValue(true);
 
       timecopView = await lumine.workspace.open("lumine://timecop");
     });

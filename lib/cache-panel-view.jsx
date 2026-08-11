@@ -51,7 +51,7 @@ module.exports = class CachePanelView {
   getCompileCacheStats() {
     try {
       return require(
-        path.join(lumine.app.getResourcePath(), "src", "compile-cache"),
+        path.join(lumine.application.getResourcePath(), "src", "compile-cache"),
       ).getCacheStats();
     } catch {
       return null;

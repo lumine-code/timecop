@@ -11,7 +11,7 @@ Display information about where time is spent while Lumine loads.
 
 ## Installation
 
-To install `timecop` search for _timecop_ in the Install pane of the Lumine settings or run `lumine --install lumine-code/timecop`.
+To install `timecop` search for it in the Install pane of the Lumine settings, or run the command `lumine --install lumine-code/timecop`.
 
 ## Commands
 

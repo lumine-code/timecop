@@ -1,5 +1,7 @@
 const path = require("path");
-const CompileCache = require(path.join(lumine.application.getResourcePath(), "src", "compile-cache"));
+const CompileCache = require(
+  path.join(lumine.application.getResourcePath(), "src", "compile-cache"),
+);
 
 describe("Timecop", () => {
   beforeEach(async () => {

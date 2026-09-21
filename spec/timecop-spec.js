@@ -77,6 +77,47 @@ describe("Timecop", () => {
       expect(cachePanel.element.textContent).toMatch(/Babel files compiled\s*4/);
       expect(cachePanel.element.textContent).toMatch(/Typescript files compiled\s*6/);
     });
+
+    it("uses the wall time of the initial activation batch for its total", () => {
+      lumine.packages.initialPackagesActivationTime = 42;
+
+      timecopView.showActivePackages();
+
+      expect(timecopView.refs.packageActivationPanel.refs.summary.textContent).toContain(
+        "in 42ms.",
+      );
+      lumine.packages.initialPackagesActivationTime = null;
+    });
+
+    it("does not let a missing package timing poison the activation total", () => {
+      lumine.packages.getActivePackages.and.returnValue([
+        new FakePackage({ name: "unmeasured-package", loadTime: 1 }),
+      ]);
+
+      timecopView.showActivePackages();
+
+      expect(timecopView.refs.packageActivationPanel.refs.summary.textContent).toContain("in 0ms.");
+      expect(timecopView.refs.packageActivationPanel.refs.summary.textContent).not.toContain("NaN");
+    });
+
+    it("does not render a non-finite timing in a package row", () => {
+      timecopView.refs.packageActivationPanel.addPackage(
+        new FakePackage({ name: "invalid-package", activateTime: Number.NaN }),
+        "activateTime",
+      );
+
+      expect(timecopView.refs.packageActivationPanel.element.textContent).toContain(
+        "invalid-package",
+      );
+      expect(timecopView.refs.packageActivationPanel.element.textContent).toContain("0ms");
+      expect(timecopView.refs.packageActivationPanel.element.textContent).not.toContain("NaN");
+    });
+
+    it("closes its old-generation pane item on deactivation", async () => {
+      await lumine.packages.deactivatePackage("timecop");
+
+      expect(lumine.workspace.paneForItem(timecopView)).toBeUndefined();
+    });
   });
 
   describe("the window panel", () => {
@@ -115,6 +156,15 @@ describe("Timecop", () => {
       expect(windowPanel.refs.windowLoadTime.classList.contains("highlight-info")).toBe(true);
     });
 
+    it("does not render a non-finite window timing", async () => {
+      const windowPanel = await openWindowPanel();
+      lumine.setWindowLoadTime(Number.NaN);
+      await lumine.window.whenLoaded();
+
+      expect(windowPanel.refs.windowLoadTime.textContent).toBe("0ms");
+      expect(windowPanel.refs.windowLoadTime.textContent).not.toContain("NaN");
+    });
+
     it("hides the deserialize timings for a project that was not previously opened", async () => {
       const windowPanel = await openWindowPanel();
       lumine.setWindowLoadTime(500);
@@ -131,6 +181,18 @@ describe("Timecop", () => {
       expect(windowPanel.refs.deserializeTimings.style.display).toBe("");
       expect(windowPanel.refs.projectLoadTime.textContent).toBe("20ms");
       expect(windowPanel.refs.workspaceLoadTime.textContent).toBe("30ms");
+    });
+
+    it("does not render non-finite deserialize timings", async () => {
+      lumine.deserializeTimings = { project: Number.NaN, workspace: Number.NaN };
+
+      const windowPanel = await openWindowPanel();
+      lumine.setWindowLoadTime(500);
+      await lumine.window.whenLoaded();
+
+      expect(windowPanel.refs.projectLoadTime.textContent).toBe("0ms");
+      expect(windowPanel.refs.workspaceLoadTime.textContent).toBe("0ms");
+      expect(windowPanel.refs.deserializeTimings.textContent).not.toContain("NaN");
     });
   });
 });

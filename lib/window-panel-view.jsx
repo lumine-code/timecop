@@ -1,6 +1,7 @@
 /** @jsx etch.dom */
 const { CompositeDisposable } = require("lumine");
 const etch = require("@lumine-code/etch");
+const normalizeDuration = require("./timing");
 
 module.exports = class WindowPanelView {
   constructor() {
@@ -79,28 +80,27 @@ module.exports = class WindowPanelView {
   }
 
   populate() {
-    const time = lumine.window.getLoadTime();
+    const time = normalizeDuration(lumine.window.getLoadTime());
     this.refs.windowLoadTime.classList.add(this.getHighlightClass(time));
     this.refs.windowLoadTime.textContent = `${time}ms`;
 
     const shellLoadTime = lumine.runtime.getShellLoadTime();
     if (shellLoadTime != null) {
-      this.refs.shellLoadTime.classList.add(this.getHighlightClass(shellLoadTime));
-      this.refs.shellLoadTime.textContent = `${shellLoadTime}ms`;
+      const duration = normalizeDuration(shellLoadTime);
+      this.refs.shellLoadTime.classList.add(this.getHighlightClass(duration));
+      this.refs.shellLoadTime.textContent = `${duration}ms`;
     } else {
       this.refs.shellTiming.style.display = "none";
     }
 
     if (lumine.deserializeTimings.project != null) {
       // Project and workspace timings only exist if the current project was previously opened
-      this.refs.projectLoadTime.classList.add(
-        this.getHighlightClass(lumine.deserializeTimings.project),
-      );
-      this.refs.projectLoadTime.textContent = `${lumine.deserializeTimings.project}ms`;
-      this.refs.workspaceLoadTime.classList.add(
-        this.getHighlightClass(lumine.deserializeTimings.workspace),
-      );
-      this.refs.workspaceLoadTime.textContent = `${lumine.deserializeTimings.workspace}ms`;
+      const projectTime = normalizeDuration(lumine.deserializeTimings.project);
+      const workspaceTime = normalizeDuration(lumine.deserializeTimings.workspace);
+      this.refs.projectLoadTime.classList.add(this.getHighlightClass(projectTime));
+      this.refs.projectLoadTime.textContent = `${projectTime}ms`;
+      this.refs.workspaceLoadTime.classList.add(this.getHighlightClass(workspaceTime));
+      this.refs.workspaceLoadTime.textContent = `${workspaceTime}ms`;
     } else {
       this.refs.deserializeTimings.style.display = "none";
     }

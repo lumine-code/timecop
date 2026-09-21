@@ -2,31 +2,39 @@
 const _ = require("@lumine-code/underscore-plus");
 const dedent = require("dedent");
 const etch = require("@lumine-code/etch");
+const { CompositeDisposable } = require("lumine");
 const CachePanelView = require("./cache-panel-view");
 const PackagePanelView = require("./package-panel-view");
+const normalizeDuration = require("./timing");
 const WindowPanelView = require("./window-panel-view");
 
 module.exports = class TimecopView {
   constructor({ uri }) {
     this.uri = uri;
+    this.disposables = new CompositeDisposable();
     etch.initialize(this);
     this.refs.cacheLoadingPanel.populate();
     if (lumine.packages.hasLoadedInitialPackages()) {
       this.populateLoadingViews();
     } else {
-      lumine.packages.onDidLoadInitialPackages(() => this.populateLoadingViews());
+      this.disposables.add(
+        lumine.packages.onDidLoadInitialPackages(() => this.populateLoadingViews()),
+      );
     }
 
     if (lumine.packages.hasActivatedInitialPackages()) {
       this.populateActivationViews();
     } else {
-      lumine.packages.onDidActivateInitialPackages(() => this.populateActivationViews());
+      this.disposables.add(
+        lumine.packages.onDidActivateInitialPackages(() => this.populateActivationViews()),
+      );
     }
   }
 
   update() {}
 
   destroy() {
+    this.disposables.dispose();
     return etch.destroy(this);
   }
 
@@ -76,9 +84,11 @@ module.exports = class TimecopView {
       lumine.packages.getActivePackages().filter((pack) => pack.getType() !== "theme"),
       "activateTime",
     );
+    const batchTime = lumine.packages.initialPackagesActivationTime;
+    const totalTime = batchTime == null ? time : normalizeDuration(batchTime);
     this.refs.packageActivationPanel.addPackages(packages, "activateTime");
     this.refs.packageActivationPanel.refs.summary.textContent = dedent`
-      Activated ${count} packages in ${time}ms.
+      Activated ${count} packages in ${totalTime}ms.
       ${_.pluralize(packages.length, "package")} took longer than 5ms to activate.\
     `;
   }
@@ -110,13 +120,17 @@ module.exports = class TimecopView {
   getSlowPackages(packages, timeKey) {
     let time = 0;
     let count = 0;
-    packages = packages.filter(function (pack) {
-      time += pack[timeKey];
+    const measuredPackages = packages.map((pack) => ({
+      pack,
+      duration: normalizeDuration(pack[timeKey]),
+    }));
+    const slowPackages = measuredPackages.filter(function ({ duration }) {
+      time += duration;
       count++;
-      return pack[timeKey] > 5;
+      return duration > 5;
     });
-    packages.sort((pack1, pack2) => pack2[timeKey] - pack1[timeKey]);
-    return { time, count, packages };
+    slowPackages.sort((entry1, entry2) => entry2.duration - entry1.duration);
+    return { time, count, packages: slowPackages.map(({ pack }) => pack) };
   }
 
   serialize() {

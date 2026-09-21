@@ -1,6 +1,7 @@
 /** @jsx etch.dom */
 const { Disposable } = require("lumine");
 const etch = require("@lumine-code/etch");
+const normalizeDuration = require("./timing");
 
 module.exports = class PackagePanelView {
   constructor({ title }) {
@@ -49,6 +50,7 @@ module.exports = class PackagePanelView {
   }
 
   addPackage(pack, timeKey) {
+    const duration = normalizeDuration(pack[timeKey]);
     const li = document.createElement("div");
     li.classList.add("list-item");
 
@@ -63,11 +65,8 @@ module.exports = class PackagePanelView {
     li.appendChild(line);
 
     const timeSpan = document.createElement("span");
-    timeSpan.classList.add(
-      "inline-block",
-      pack[timeKey] > 25 ? "highlight-error" : "highlight-warning",
-    );
-    timeSpan.textContent = `${pack[timeKey]}ms`;
+    timeSpan.classList.add("inline-block", duration > 25 ? "highlight-error" : "highlight-warning");
+    timeSpan.textContent = `${duration}ms`;
     li.appendChild(timeSpan);
 
     this.refs.list.appendChild(li);

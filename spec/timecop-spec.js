@@ -74,7 +74,7 @@ describe("Timecop", () => {
     it("shows how many files were transpiled from each language", () => {
       const cachePanel = timecopView.refs.cacheLoadingPanel;
 
-      expect(cachePanel.element.textContent).toMatch(/Babel files compiled\s*4/);
+      expect(cachePanel.element.textContent).toMatch(/JavaScript files compiled\s*4/);
       expect(cachePanel.element.textContent).toMatch(/Typescript files compiled\s*6/);
     });
 

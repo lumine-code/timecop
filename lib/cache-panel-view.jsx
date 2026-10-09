@@ -20,7 +20,7 @@ module.exports = class CachePanelView {
           <div className="panel-heading">Compile Cache</div>
           <div className="panel-body padded">
             <div className="timing">
-              <span className="inline-block">Babel files compiled</span>
+              <span className="inline-block">JavaScript files compiled</span>
               <span className="inline-block" ref="babelCompileCount">
                 Loading…
               </span>
@@ -42,9 +42,11 @@ module.exports = class CachePanelView {
     const compileCacheStats = this.getCompileCacheStats();
     if (compileCacheStats) {
       this.refs.babelCompileCount.classList.add("highlight-info");
-      this.refs.babelCompileCount.textContent = compileCacheStats[".js"].misses;
+      this.refs.babelCompileCount.textContent =
+        (compileCacheStats[".js"]?.misses ?? 0) + (compileCacheStats[".jsx"]?.misses ?? 0);
       this.refs.typescriptCompileCount.classList.add("highlight-info");
-      this.refs.typescriptCompileCount.textContent = compileCacheStats[".ts"].misses;
+      this.refs.typescriptCompileCount.textContent =
+        (compileCacheStats[".ts"]?.misses ?? 0) + (compileCacheStats[".tsx"]?.misses ?? 0);
     }
   }
 

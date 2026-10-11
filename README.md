@@ -4,6 +4,8 @@ Display information about where time is spent while Lumine loads.
 
 Fork of [pulsar-edit/pulsar](https://github.com/pulsar-edit/pulsar) (`packages/timecop`).
 
+Closing Timecop or disabling the package cancels pending startup timing updates.
+
 ## Features
 
 - **Startup breakdown**: shows overall startup and compile cache timing.

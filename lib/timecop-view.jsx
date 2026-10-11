@@ -35,7 +35,9 @@ module.exports = class TimecopView {
 
   destroy() {
     this.disposables.dispose();
-    return etch.destroy(this);
+    // Pane teardown does not await Etch's scheduled destruction. Retire the
+    // children now so a pending window-loaded callback cannot reach them.
+    etch.destroySync(this);
   }
 
   render() {

@@ -5,6 +5,7 @@ const normalizeDuration = require("./timing");
 
 module.exports = class WindowPanelView {
   constructor() {
+    this.destroyed = false;
     etch.initialize(this);
 
     this.disposables = new CompositeDisposable();
@@ -28,12 +29,15 @@ module.exports = class WindowPanelView {
     // A view restored into a window is built while that window is still
     // loading, so every one of these timings is waited for rather than read
     // now — the window load time is the last of them to be recorded.
-    lumine.window.whenLoaded().then(() => this.populate());
+    lumine.window.whenLoaded().then(() => {
+      if (!this.destroyed) this.populate();
+    });
   }
 
   update() {}
 
   destroy() {
+    this.destroyed = true;
     this.disposables.dispose();
     return etch.destroy(this);
   }

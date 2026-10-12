@@ -7,15 +7,14 @@ const CachePanelView = require("./cache-panel-view");
 const PackagePanelView = require("./package-panel-view");
 const normalizeDuration = require("./timing");
 const WindowPanelView = require("./window-panel-view");
-const restoreCopiedScroll = require("./restore-copied-scroll");
 
 module.exports = class TimecopView {
-  copy({ signal } = {}) {
-    signal?.throwIfAborted();
-    const copy = new TimecopView({ uri: this.uri });
-    const scrollTop = restoreCopiedScroll.capture(this);
-    restoreCopiedScroll(copy, scrollTop);
-    return copy;
+  canCopy() {
+    return false;
+  }
+
+  getSingletonKey() {
+    return "timecop:main";
   }
 
   constructor({ uri }) {
@@ -45,7 +44,6 @@ module.exports = class TimecopView {
   destroy() {
     if (this.destroyed) return;
     this.destroyed = true;
-    this.pendingCopyScrollRestore?.dispose();
     this.disposables.dispose();
     // Pane teardown does not await Etch's scheduled destruction. Retire the
     // children now so a pending window-loaded callback cannot reach them.

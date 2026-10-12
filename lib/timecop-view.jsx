@@ -9,6 +9,18 @@ const normalizeDuration = require("./timing");
 const WindowPanelView = require("./window-panel-view");
 
 module.exports = class TimecopView {
+  copy({ signal } = {}) {
+    signal?.throwIfAborted();
+    const copy = new TimecopView({ uri: this.uri });
+    const scrollTop = this.element.scrollTop;
+    const initialScrollTop = copy.element.scrollTop;
+    requestAnimationFrame(() => {
+      if (!copy.destroyed && copy.element.scrollTop === initialScrollTop)
+        copy.element.scrollTop = scrollTop;
+    });
+    return copy;
+  }
+
   constructor({ uri }) {
     this.uri = uri;
     this.disposables = new CompositeDisposable();
@@ -34,6 +46,8 @@ module.exports = class TimecopView {
   update() {}
 
   destroy() {
+    if (this.destroyed) return;
+    this.destroyed = true;
     this.disposables.dispose();
     // Pane teardown does not await Etch's scheduled destruction. Retire the
     // children now so a pending window-loaded callback cannot reach them.

@@ -13,6 +13,8 @@ Closing Timecop or disabling the package cancels pending startup timing updates.
 - **Theme timing**: reports how long themes take to load and activate.
 - **Slowdown hints**: highlights the packages and themes that cost the most time.
 
+![The timecop view in Lumine.](.github/demo.png)
+
 ## Installation
 
 To install `timecop` search for it in the Install pane of the Lumine settings, or run the command `lumine --install lumine-code/timecop`.

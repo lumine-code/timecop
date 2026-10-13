@@ -1,0 +1,16 @@
+{
+  "title": "timecop",
+  "description": "The timecop view in Lumine.",
+  "recordedOn": "2026-10-13",
+  "sourceRevision": "3e903c67019563ef9044e9f4ac658fb0f7d83817",
+  "mode": "normal",
+  "fontSettings": "default",
+  "images": [
+    {
+      "file": "demo.png",
+      "label": "The timecop view in Lumine.",
+      "width": 1100,
+      "height": 760
+    }
+  ]
+}

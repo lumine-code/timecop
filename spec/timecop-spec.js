@@ -120,6 +120,44 @@ describe("Timecop", () => {
     });
   });
 
+  describe("the loading bootstrap report", () => {
+    it("includes initialization in totals and slow rows without replacing raw timings", async () => {
+      const packages = [
+        new FakePackage({ name: "slow-initializing", loadTime: 1, initializeTime: 5 }),
+        new FakePackage({ name: "at-threshold", loadTime: 2, initializeTime: 3 }),
+        new FakePackage({ name: "initializing-only", initializeTime: 7 }),
+        new FakePackage({ name: "loading-only", loadTime: 6 }),
+        new FakePackage({ name: "unmeasured" }),
+        new FakePackage({ name: "invalid-initializing", loadTime: 2, initializeTime: Number.NaN }),
+      ].map(Object.freeze);
+      const rawTimings = packages.map(({ loadTime, initializeTime }) => ({
+        loadTime,
+        initializeTime,
+      }));
+      spyOn(lumine.packages, "getLoadedPackages").and.returnValue(packages);
+      spyOn(lumine.packages, "hasLoadedInitialPackages").and.returnValue(true);
+      const view = await lumine.workspace.open("lumine://timecop");
+      const panel = view.refs.packageLoadingPanel;
+      const rows = [...panel.refs.list.children];
+
+      expect(panel.refs.summary.textContent).toContain("Loaded 6 packages in 26ms.");
+      expect(panel.refs.summary.textContent).toContain("3 packages took longer than 5ms to load.");
+      expect(rows.map((row) => row.querySelector("a.package").textContent)).toEqual([
+        "initializing-only",
+        "slow-initializing",
+        "loading-only",
+      ]);
+      expect(rows.map((row) => row.lastElementChild.textContent)).toEqual(["7ms", "6ms", "6ms"]);
+      expect(
+        packages.map(({ loadTime, initializeTime }) => ({ loadTime, initializeTime })),
+      ).toEqual(rawTimings);
+
+      const open = spyOn(lumine.workspace, "open");
+      rows[1].querySelector("a.package").dispatchEvent(new MouseEvent("click", { bubbles: true }));
+      expect(open).toHaveBeenCalledOnceWith("lumine://config/packages/slow-initializing");
+    });
+  });
+
   describe("the window panel", () => {
     let deserializeTimings = null;
 
@@ -198,10 +236,11 @@ describe("Timecop", () => {
 });
 
 class FakePackage {
-  constructor({ name, activateTime, loadTime }) {
+  constructor({ name, activateTime, loadTime, initializeTime }) {
     this.name = name;
     this.activateTime = activateTime;
     this.loadTime = loadTime;
+    this.initializeTime = initializeTime;
   }
   getType() {
     return "package";

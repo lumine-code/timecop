@@ -80,15 +80,18 @@ module.exports = class TimecopView {
   }
 
   showLoadedPackages() {
-    // Main-module loading belongs to the explicit initialization phase. Take
-    // a display snapshot so the loading report includes both phases without
-    // replacing the Package's individual measurements.
+    // Metadata, main-module loading and initialization are separate bootstrap
+    // measurements. Include all three in a display snapshot without replacing
+    // the Package's individual measurements.
     const loaded = lumine.packages
       .getLoadedPackages()
       .filter((pack) => pack.getType() !== "theme")
       .map((pack) => ({
         name: pack.name,
-        loadTime: normalizeDuration(pack.loadTime) + normalizeDuration(pack.initializeTime),
+        loadTime:
+          normalizeDuration(pack.loadTime) +
+          normalizeDuration(pack.mainModuleLoadTime) +
+          normalizeDuration(pack.initializeTime),
       }));
     const { time, count, packages } = this.getSlowPackages(loaded, "loadTime");
     this.refs.packageLoadingPanel.addPackages(packages, "loadTime");

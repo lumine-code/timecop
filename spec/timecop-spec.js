@@ -121,17 +121,35 @@ describe("Timecop", () => {
   });
 
   describe("the loading bootstrap report", () => {
-    it("includes initialization in totals and slow rows without replacing raw timings", async () => {
+    it("includes main-module loading and initialization without replacing raw timings", async () => {
       const packages = [
         new FakePackage({ name: "slow-initializing", loadTime: 1, initializeTime: 5 }),
-        new FakePackage({ name: "at-threshold", loadTime: 2, initializeTime: 3 }),
+        new FakePackage({
+          name: "slow-main-loading",
+          loadTime: 1,
+          mainModuleLoadTime: 3,
+          initializeTime: 2,
+        }),
+        new FakePackage({
+          name: "at-threshold",
+          loadTime: 2,
+          mainModuleLoadTime: 2,
+          initializeTime: 1,
+        }),
         new FakePackage({ name: "initializing-only", initializeTime: 7 }),
+        new FakePackage({ name: "main-module-only", mainModuleLoadTime: 8 }),
         new FakePackage({ name: "loading-only", loadTime: 6 }),
         new FakePackage({ name: "unmeasured" }),
-        new FakePackage({ name: "invalid-initializing", loadTime: 2, initializeTime: Number.NaN }),
+        new FakePackage({
+          name: "invalid-initializing",
+          loadTime: 2,
+          mainModuleLoadTime: Number.NaN,
+          initializeTime: Number.NaN,
+        }),
       ].map(Object.freeze);
-      const rawTimings = packages.map(({ loadTime, initializeTime }) => ({
+      const rawTimings = packages.map(({ loadTime, mainModuleLoadTime, initializeTime }) => ({
         loadTime,
+        mainModuleLoadTime,
         initializeTime,
       }));
       spyOn(lumine.packages, "getLoadedPackages").and.returnValue(packages);
@@ -140,20 +158,32 @@ describe("Timecop", () => {
       const panel = view.refs.packageLoadingPanel;
       const rows = [...panel.refs.list.children];
 
-      expect(panel.refs.summary.textContent).toContain("Loaded 6 packages in 26ms.");
-      expect(panel.refs.summary.textContent).toContain("3 packages took longer than 5ms to load.");
+      expect(panel.refs.summary.textContent).toContain("Loaded 8 packages in 40ms.");
+      expect(panel.refs.summary.textContent).toContain("5 packages took longer than 5ms to load.");
       expect(rows.map((row) => row.querySelector("a.package").textContent)).toEqual([
+        "main-module-only",
         "initializing-only",
         "slow-initializing",
+        "slow-main-loading",
         "loading-only",
       ]);
-      expect(rows.map((row) => row.lastElementChild.textContent)).toEqual(["7ms", "6ms", "6ms"]);
+      expect(rows.map((row) => row.lastElementChild.textContent)).toEqual([
+        "8ms",
+        "7ms",
+        "6ms",
+        "6ms",
+        "6ms",
+      ]);
       expect(
-        packages.map(({ loadTime, initializeTime }) => ({ loadTime, initializeTime })),
+        packages.map(({ loadTime, mainModuleLoadTime, initializeTime }) => ({
+          loadTime,
+          mainModuleLoadTime,
+          initializeTime,
+        })),
       ).toEqual(rawTimings);
 
       const open = spyOn(lumine.workspace, "open");
-      rows[1].querySelector("a.package").dispatchEvent(new MouseEvent("click", { bubbles: true }));
+      rows[2].querySelector("a.package").dispatchEvent(new MouseEvent("click", { bubbles: true }));
       expect(open).toHaveBeenCalledOnceWith("lumine://config/packages/slow-initializing");
     });
   });
@@ -236,10 +266,11 @@ describe("Timecop", () => {
 });
 
 class FakePackage {
-  constructor({ name, activateTime, loadTime, initializeTime }) {
+  constructor({ name, activateTime, loadTime, mainModuleLoadTime, initializeTime }) {
     this.name = name;
     this.activateTime = activateTime;
     this.loadTime = loadTime;
+    this.mainModuleLoadTime = mainModuleLoadTime;
     this.initializeTime = initializeTime;
   }
   getType() {

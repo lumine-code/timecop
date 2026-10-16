@@ -1,9 +1,9 @@
 {
   "title": "timecop",
   "description": "The timecop view in Lumine.",
-  "recordedOn": "2026-10-14",
-  "sourceRevision": "e98da65d403d3b8257168edcf55d246fc72829d9",
-  "themeSourceRevision": "14a69683b0e3238e2bc128fbfae3866c1e4ee9c6",
+  "recordedOn": "2026-10-16",
+  "sourceRevision": "3ade0afc842f0ef2c024359508f0358582651bd9",
+  "themeSourceRevision": "096f9b313640b52fa9f5189a03d00212994f2955",
   "mode": "normal",
   "fontSettings": "default",
   "scenario": "demo.js",
@@ -11,8 +11,8 @@
   "environment": {
     "platform": "win32",
     "arch": "x64",
-    "electron": "44.7.0",
-    "chrome": "152.0.7977.130",
+    "electron": "44.7.1",
+    "chrome": "152.0.7977.149",
     "devicePixelRatio": 1,
     "locale": "en-GB",
     "fontFamily": "Fira Code, Menlo, DejaVu Sans Mono, Consolas, monospace",
@@ -21,26 +21,27 @@
   },
   "viewport": { "width": 1100, "height": 760 },
   "cornerRadius": 10,
+  "privacy": { "version": 1, "location": "neutral", "textChecked": true },
   "sources": {
     "editor": {
-      "revision": "385bd1b3ac2db600f1c7e077474d9da4d6deebc4",
+      "revision": "47b6a64983cdb12eab25dcecff5ba5163f330171",
       "dirty": true,
-      "workingTreeHash": "08ba420fdc2c3d9a27ae9973c15f1efb7ccd57a582986958a8f1049bc8f34d60"
+      "workingTreeHash": "aa65c5235bbf2323156ba808240561d13a0f6bb098250f9df132031b72c4e1b8"
     },
     "package": {
-      "revision": "e98da65d403d3b8257168edcf55d246fc72829d9",
-      "dirty": true,
-      "workingTreeHash": "25cb849fe2a0028623ccf7c95e8a11ea6b170e8f2321f6ac05e3da097e61ff35"
+      "revision": "3ade0afc842f0ef2c024359508f0358582651bd9",
+      "dirty": false,
+      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
     },
     "timecop": {
-      "revision": "e98da65d403d3b8257168edcf55d246fc72829d9",
-      "dirty": true,
-      "workingTreeHash": "25cb849fe2a0028623ccf7c95e8a11ea6b170e8f2321f6ac05e3da097e61ff35"
+      "revision": "3ade0afc842f0ef2c024359508f0358582651bd9",
+      "dirty": false,
+      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
     },
     "one-theme": {
-      "revision": "14a69683b0e3238e2bc128fbfae3866c1e4ee9c6",
-      "dirty": true,
-      "workingTreeHash": "50ec2f83a6347dd8113870992ec4eb2be4014f3d9e12213c2f51b543f1eca793"
+      "revision": "096f9b313640b52fa9f5189a03d00212994f2955",
+      "dirty": false,
+      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
     }
   },
   "fixtures": [
@@ -55,7 +56,7 @@
       "label": "The timecop view in Lumine.",
       "width": 1100,
       "height": 760,
-      "sha256": "81edaf7e1eb72af108788ff9321fec475cc3b74b9161deb31a589003117d6ed1"
+      "sha256": "00bee9fc69a2718b632ea591a66b340d3be34525381c6e576761be072d11da10"
     }
   ]
 }

@@ -52,7 +52,11 @@ module.exports = class TimecopView {
 
   render() {
     return (
-      <div className="timecop pane-item native-key-bindings" tabIndex="-1">
+      <div
+        className="timecop pane-item native-key-bindings"
+        tabIndex="-1"
+        attributes={{ "data-scrollbar-kind": "panel" }}
+      >
         <div className="timecop-panel">
           <div className="panels">
             <WindowPanelView ref="windowLoadingPanel" />

@@ -36,8 +36,8 @@
     "TimecopView": "createTimecopView"
   },
   "dependencies": {
-    "@lumine-code/etch": "github:lumine-code/etch#269db77d200c94fad86d3e598095dc601d32ce2d",
-    "@lumine-code/underscore-plus": "github:lumine-code/underscore-plus#b00be14b64a7ea2c93cb54429d6f01c03977ae2b",
+    "@lumine-code/etch": "github:lumine-code/etch#dbf9084e0630ec126762b2cef4194452fda46037",
+    "@lumine-code/underscore-plus": "github:lumine-code/underscore-plus#b43aecd8dcd6db42b8a0cd4839b10e66ba9e452a",
     "dedent": "^1.7.2"
   },
   "devDependencies": {

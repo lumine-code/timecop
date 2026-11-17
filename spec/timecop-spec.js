@@ -59,6 +59,42 @@ describe("Timecop", () => {
       expect(loadingPanel.element.textContent).not.toMatch(/fast-package/);
     });
 
+    it("reports readonly keyboard navigation while timing updates stay quiet", () => {
+      jasmine.attachToDOM(lumine.workspace.getElement());
+      const element = timecopView.element;
+      const reveal = spyOn(lumine.scrollbars, "reveal");
+      timecopView.populateLoadingViews();
+      expect(reveal).not.toHaveBeenCalled();
+      const filler = document.createElement("div");
+      filler.style.minHeight = "1200px";
+      element.append(filler);
+      const style = element.getAttribute("style");
+      try {
+        element.style.height = "120px";
+        element.style.maxHeight = "120px";
+        element.scrollTop = 0;
+        lumine.keymaps.loadBundledKeymaps();
+        element.focus();
+        const key = new KeyboardEvent("keydown", { key: "ArrowDown", cancelable: true });
+        Object.defineProperty(key, "target", { value: element });
+        lumine.keymaps.handleKeyboardEvent(key);
+        expect(key.defaultPrevented).toBeTrue();
+        expect(element.scrollTop).toBeGreaterThan(0);
+        expect(reveal).toHaveBeenCalledOnceWith(element);
+      } finally {
+        filler.remove();
+        if (style === null) element.removeAttribute("style");
+        else element.setAttribute("style", style);
+      }
+    });
+
+    it("releases its navigation binding with the pane item", async () => {
+      const element = timecopView.element;
+      expect(lumine.scrollbars.navigationBindings.has(element)).toBeTrue();
+      await lumine.workspace.paneForItem(timecopView).destroyItem(timecopView, true);
+      expect(lumine.scrollbars.navigationBindings.has(element)).toBeFalse();
+    });
+
     it("shows the packages that activated slowly", () => {
       const activationPanel = timecopView.refs.packageActivationPanel;
       expect(activationPanel.element.textContent).toMatch(

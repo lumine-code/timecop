@@ -21,6 +21,7 @@ module.exports = class TimecopView {
     this.uri = uri;
     this.disposables = new CompositeDisposable();
     etch.initialize(this);
+    this.disposables.add(lumine.scrollbars.bindNavigation(this.element));
     this.refs.cacheLoadingPanel.populate();
     if (lumine.packages.hasLoadedInitialPackages()) {
       this.populateLoadingViews();
